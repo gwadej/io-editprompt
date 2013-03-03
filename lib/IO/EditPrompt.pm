@@ -3,8 +3,34 @@ package IO::EditPrompt;
 use warnings;
 use strict;
 
-out $VERSION = '0.001';
+our $VERSION = '0.001';
 
+sub new {
+}
+
+my $count = 0;
+
+sub promp_long_text {
+    my ($prompt) = @_;
+    my $output;
+    do {
+        my $tmpfile = get_tempfile_name( $count++ );
+        write_file( $tmpfile, "# $prompt" ) unless -f $tmpfile;
+        system 'vim', '-i', 'NONE', $tmpfile;
+        $output = read_file( $tmpfile ) if -s $tmpfile ne 2+length $prompt;
+        $output =~ s/^#[^\n]*\n//smg;
+    } while( (0 == length $output) && prompt 'Content is empty, retry?', '-y' );
+
+    return $output;
+}
+
+sub get_tempfile_name {
+    return '.textarea.' . shift() . '.tmp';
+}
+
+sub remove_tempfiles {
+    unlink grep { -f $_ } map { get_tempfile_name( $_ ) } 0 .. $count-1;
+}
 
 1;
 __END__
