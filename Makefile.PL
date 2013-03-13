@@ -9,8 +9,9 @@ WriteMakefile(
     ABSTRACT_FROM       => 'lib/IO/EditPrompt.pm',
     PL_FILES            => {},
     PREREQ_PM => {
-        'Test::More' => 0,
-        'version'    => 0,
+        'Test::More'   => 0,
+        'File::Temp'   => 0,
+        'IO::Prompter' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'IO-EditPrompt-*' },

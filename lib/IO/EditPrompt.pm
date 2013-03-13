@@ -3,33 +3,97 @@ package IO::EditPrompt;
 use warnings;
 use strict;
 
+use File::Temp ();
+use IO::Prompter ();
+
 our $VERSION = '0.001';
 
 sub new {
+    my ($class, $opts) = (@_);
+
+    $opts ||= {};
+    die "parameter is not a hashref.\n" unless reg $opt eq ref {};
+    die "'$opts->{tmpdir}' is not a directory.\n" unless -d $opts->{tmpdir};
+
+    my $self = bless {
+        dir => $opts->{tmpdir},
+        editor => $opts->{editor},
+        def_editor => undef,
+        editor_args => [],
+    }, $class;
+    $self->_normalize_editor( $opts->{def_editor} );
+    return $self;
 }
 
-my $count = 0;
+sub prompt {
+    my ($self, $prompt) = @_;
 
-sub promp_long_text {
-    my ($prompt) = @_;
-    my $output;
+    my $output = '';
+    my $fmt_prompt = _format_prompt( $prompt );
+
     do {
-        my $tmpfile = get_tempfile_name( $count++ );
-        write_file( $tmpfile, "# $prompt" ) unless -f $tmpfile;
-        system 'vim', '-i', 'NONE', $tmpfile;
-        $output = read_file( $tmpfile ) if -s $tmpfile ne 2+length $prompt;
-        $output =~ s/^#[^\n]*\n//smg;
-    } while( (0 == length $output) && prompt 'Content is empty, retry?', '-y' );
+        my $filename = $self->_create_tmp_file( $fmt_prompt );
+        $self->_run_editor( $filename );
+        $output = $self->_get_output( $filename, $fmt_prompt );
+    } while( (0 == length $output) && IO::Prompter::prompt( 'Content is empty, retry?', '-y' ) );
 
     return $output;
 }
 
-sub get_tempfile_name {
-    return '.textarea.' . shift() . '.tmp';
+sub _normalize_editor {
+    my ($self, $def_editor) = @_;
+    $self->{editor} ||= $ENV{EDITOR} || $def_editor || 'vim';
+
+    # Turn off saving state on vim
+    $self->{editor_args} = [ '-i', 'NONE' ] if $self->{editor} =~ /\bvim$/;
+    return;
 }
 
-sub remove_tempfiles {
-    unlink grep { -f $_ } map { get_tempfile_name( $_ ) } 0 .. $count-1;
+sub _format_prompt {
+    my ($prompt) = @_;
+    return join( q{}, map { "# $_\n" } split /\n/, $prompt );
+}
+
+sub _create_tmp_file {
+    my ($self, $prompt) = @_;
+
+    my $tmp = File::Temp->new( UNLINK => 1, EXLOCK => 1, ($self->{dir} ? (DIR => $self->{dir}) : ()) );
+    my $filename = $tmp->filename;
+    print {$tmp} $prompt;
+    close( $tmp ) or die "Unable to write '$filename': $!\n";
+
+    return $filename;
+}
+
+sub _read_file {
+    my ($self, $filename) = @_;
+    open my $fh, '<', $filename or die "Unable to re-read '$filename': $!\n";
+    local $/;
+    return scalar <$fh>;
+}
+
+sub _get_output {
+    my ($self, $filename, $prompt) = @_;
+    return '' if  -s $filename eq length $prompt;
+    my $output = $self->_read_file( $filename );
+    $output =~ s/^#[^\n]*\n//smg;
+    return $output;
+}
+
+sub _run_editor {
+    my ($self, $file) = @_;
+    my $err = system $self->{editor}, @{$self->{editor_args}}, $file;
+    return unless $err;
+    if ($? == -1) {
+        die "failed to execute '$self->{editor}': $!\n";
+    }
+    elsif ($? & 127) {
+        die sprintf "'$self->{editor}' died with signal %d, %s coredump\n",
+            ($? & 127),  ($? & 128) ? 'with' : 'without';
+    }
+    else {
+        die sprintf "'$self->{editor}' exited with value %d\n", $? >> 8;
+    }
 }
 
 1;
