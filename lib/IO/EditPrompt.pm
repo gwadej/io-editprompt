@@ -12,8 +12,8 @@ sub new {
     my ($class, $opts) = (@_);
 
     $opts ||= {};
-    die "parameter is not a hashref.\n" unless reg $opt eq ref {};
-    die "'$opts->{tmpdir}' is not a directory.\n" unless -d $opts->{tmpdir};
+    die "parameter is not a hashref.\n" unless ref $opts eq ref {};
+    die "'$opts->{tmpdir}' is not a directory.\n" if defined $opts->{tmpdir} and !-d $opts->{tmpdir};
 
     my $self = bless {
         dir => $opts->{tmpdir},
@@ -127,6 +127,10 @@ This document describes IO::EditPrompt version 0.001
 
 
 =head1 INTERFACE 
+
+=head2 new
+
+=head2 prompt
 
 =for author to fill in:
     Write a separate section listing the public components of the modules
