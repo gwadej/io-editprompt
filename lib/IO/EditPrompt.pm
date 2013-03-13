@@ -18,7 +18,6 @@ sub new {
     my $self = bless {
         dir => $opts->{tmpdir},
         editor => $opts->{editor},
-        def_editor => undef,
         editor_args => [],
     }, $class;
     $self->_normalize_editor( $opts->{def_editor} );
