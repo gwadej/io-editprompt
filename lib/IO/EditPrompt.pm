@@ -31,7 +31,7 @@ sub prompt {
     my $fmt_prompt = _format_prompt( $prompt );
 
     do {
-        my $filename = $self->_create_tmp_file( $fmt_prompt );
+        my ($tmp, $filename) = $self->_create_tmp_file( $fmt_prompt );
         $self->_run_editor( $filename );
         $output = $self->_get_output( $filename, $fmt_prompt );
     } while( (0 == length $output) && IO::Prompter::prompt( 'Content is empty, retry?', '-y' ) );
@@ -62,7 +62,7 @@ sub _create_tmp_file {
     print {$tmp} $prompt;
     close( $tmp ) or die "Unable to write '$filename': $!\n";
 
-    return $filename;
+    return ($tmp, $filename);
 }
 
 sub _read_file {
