@@ -50,6 +50,7 @@ sub _normalize_editor {
 
 sub _format_prompt {
     my ($prompt) = @_;
+    return '' unless defined $prompt;
     return join( q{}, map { "# $_\n" } split /\n/, $prompt );
 }
 
