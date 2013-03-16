@@ -76,7 +76,7 @@ sub _get_output {
     my ($self, $filename, $prompt) = @_;
     return '' if  -s $filename eq length $prompt;
     my $output = $self->_read_file( $filename );
-    $output =~ s/^#[^\n]*\n//smg;
+    $output =~ s/^#[^\n]*(?:\n|\Z)//smg;
     return $output;
 }
 
