@@ -25,13 +25,13 @@ sub new {
 }
 
 sub prompt {
-    my ($self, $prompt) = @_;
+    my ($self, $prompt, $deftext) = @_;
 
     my $output = '';
     my $fmt_prompt = _format_prompt( $prompt );
 
     do {
-        my ($tmp, $filename) = $self->_create_tmp_file( $fmt_prompt );
+        my ($tmp, $filename) = $self->_create_tmp_file( $fmt_prompt, $deftext );
         $self->_run_editor( $filename );
         $output = $self->_get_output( $filename, $fmt_prompt );
     } while( (0 == length $output) && IO::Prompter::prompt( 'Content is empty, retry?', '-y' ) );
@@ -55,11 +55,11 @@ sub _format_prompt {
 }
 
 sub _create_tmp_file {
-    my ($self, $prompt) = @_;
+    my ($self, @texts) = @_;
 
     my $tmp = File::Temp->new( UNLINK => 1, EXLOCK => 1, ($self->{dir} ? (DIR => $self->{dir}) : ()) );
     my $filename = $tmp->filename;
-    print {$tmp} $prompt;
+    print {$tmp} grep { defined $_ } @texts;
     close( $tmp ) or die "Unable to write '$filename': $!\n";
 
     return ($tmp, $filename);
