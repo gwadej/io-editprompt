@@ -1,10 +1,15 @@
+.gitignore
 Changes
 lib/IO/EditPrompt.pm
+Makefile
 Makefile.PL
-MANIFEST			This list of files
+MANIFEST
+MANIFEST.SKIP
 README
 t/00.load.t
-t/local-perlcritic.t
-t/local-pod-coverage.t
-t/local-pod.t
 t/new.t
+t/private_create_tmp_file.t
+t/private_format_prompt.t
+t/private_get_output.t
+t/private_normalize_editor.t
+t/prompt.t
