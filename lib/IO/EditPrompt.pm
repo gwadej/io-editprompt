@@ -103,28 +103,39 @@ __END__
 
 IO::EditPrompt - Support a prompt that uses the configured editor to take long text
 
-
 =head1 VERSION
 
 This document describes IO::EditPrompt version 0.001
-
 
 =head1 SYNOPSIS
 
     use IO::EditPrompt;
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-  
-  
+    my $p = IO::EditPrompt->new();
+    my $answer = $p->prompt( 'Explain in your own words:' );
+
+    my $p1 = IO::EditPrompt->new({ tmpdir=>'./tmp', editor=>'emacs' });
+    my $abstract = $p1->prompt( "Enter your abstract:\n(no HTML tags allowed)\n", 'Boilerplate abstract' );
+    my $write_up = $p1->prompt( <<EOH );
+    Enter a write-up of meeting:
+      blank lines for paragraphs.
+      <em/>, <strong/>, <a/> are all supported
+    EOH
+
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+This module provides extended functionality for entering or changing text for
+command line programs.
 
+The C<IO::Prompter> module does a wonderful job of encapsulating
+a lot of user entry tasks in a really nice interface. One thing it does not do well
+is allow input for long-form text. Many version control systems use the approach
+of opening a window in your editor to deal with long-form text. This seems like a
+great solution and avoids a large number of nasty bits (like editing functions
+surrounding Unicode characters).
+
+This module wraps up the functionality needed to use an editor in this fashion in
+a realtively straight-forward interface.
 
 =head1 INTERFACE 
 
