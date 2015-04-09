@@ -1,19 +1,20 @@
-IO-EditPrompt version 0.0.1
+IO-EditPrompt version 0.01
 
-[ REPLACE THIS...
+Sometimes you need to prompt a user for a large amount of text. (Say
+more than one line.)
 
-  The README is used to introduce the module and provide instructions on
-  how to install the module, any machine dependencies it may have (for
-  example C compilers and installed libraries) and any other information
-  that should be understood before the module is installed.
+This module provides extended functionality for entering or changing text for
+command line programs.
 
-  A README file is required for CPAN modules since CPAN extracts the
-  README file from a module distribution so that people browsing the
-  archive can use it get an idea of the modules uses. It is usually a
-  good idea to provide version information here so that people can
-  decide whether fixes for the module are worth downloading.
-]
+The IO::Prompter module does a wonderful job of encapsulating a lot of user
+entry tasks in a really nice interface. One thing it does not do well is allow
+input for long-form text. Many version control systems use the approach of
+opening a window in your editor to deal with long-form text. This seems like a
+great solution and avoids a large number of nasty bits (like editing functions
+surrounding Unicode characters).
 
+This module wraps up the functionality needed to use an editor in this fashion
+in a relatively straight-forward interface.
 
 INSTALLATION
 
@@ -27,12 +28,12 @@ To install this module, run the following commands:
 
 DEPENDENCIES
 
-None.
-
+File::Temp
+IO::Prompter
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2013, G. Wade Johnson
+Copyright (C) 2015, G. Wade Johnson <gwadej@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

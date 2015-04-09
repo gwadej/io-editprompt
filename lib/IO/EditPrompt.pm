@@ -134,8 +134,8 @@ of opening a window in your editor to deal with long-form text. This seems like 
 great solution and avoids a large number of nasty bits (like editing functions
 surrounding Unicode characters).
 
-This module wraps up the functionality needed to use an editor in this fashion in
-a realtively straight-forward interface.
+This module wraps up the functionality needed to use an editor in this fashion
+in a realtively straight-forward interface.
 
 =head1 INTERFACE 
 
