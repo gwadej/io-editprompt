@@ -1,7 +1,6 @@
 .gitignore
 Changes
 lib/IO/EditPrompt.pm
-Makefile
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
@@ -13,3 +12,8 @@ t/private_format_prompt.t
 t/private_get_output.t
 t/private_normalize_editor.t
 t/prompt.t
+xt/critic.t
+xt/hasversion.t
+xt/minimumversion.t
+xt/pod.t
+xt/podcoverage.t

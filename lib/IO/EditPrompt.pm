@@ -6,7 +6,7 @@ use strict;
 use File::Temp ();
 use IO::Prompter ();
 
-our $VERSION = '0.001';
+our $VERSION = '0.01';
 
 sub new {
     my ($class, $opts) = (@_);
@@ -20,7 +20,7 @@ sub new {
         editor => $opts->{editor},
         editor_args => [],
     }, $class;
-    $self->_normalize_editor( $opts->{def_editor} );
+    $self->_normalize_editor( $opts->{default_editor} );
     return $self;
 }
 
@@ -105,7 +105,7 @@ IO::EditPrompt - Support a prompt that uses the configured editor to take long t
 
 =head1 VERSION
 
-This document describes IO::EditPrompt version 0.001
+This document describes IO::EditPrompt version 0.01
 
 =head1 SYNOPSIS
 
@@ -141,83 +141,64 @@ a realtively straight-forward interface.
 
 =head2 new
 
-=head2 prompt
-
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
-
-
-=head1 DIAGNOSTICS
-
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+Create new C<IO::EditPrompt> object. This object can be used with multiple prompt
+calls. The optional paramters must be passed as a hashref.
 
 =over
 
-=item C<< Error message here, perhaps with %s placeholders >>
+=item dir
 
-[Description of error here]
+Specify a directory for the temporary file to edit.
 
-=item C<< Another error message here >>
+=item default_editor
 
-[Description of error here]
+The name of a default editor if none is provided by the EDITOR environment
+variable.
 
-[Et cetera, et cetera]
+=item editor
+
+Force calling this program as the editor, independent of the environment. If
+this parameter is missing, the program will default to using the EDITOR environment
+variable. If there is no value for EDITOR, we try the supplied C<default_editor>
+parameter. If none of these have values, we default to C<vim>.
 
 =back
 
+=head2 prompt( $prompt, $deftext )
+
+Open the editor with the supplied C<$prompt> and C<$deftext> already filled in.
+Every line of the prompt text will be prefixed by the string C<# >, the default
+text will be supplied as is. After the user saves any changes, the content of
+the file is read and any text that begins with C<#> is removed. The result is
+returned to the caller.
+
+If the cleaned up text is empty, the user is given an attempt to retry.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-  
-IO::EditPrompt requires no configuration files or environment variables.
+IO::EditPrompt relies on the EDITOR environment variable to supply a default
+editor to use.
 
 
 =head1 DEPENDENCIES
 
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
+=over
 
-None.
+=item *
 
+C<File::Temp>
+
+=item *
+
+C<IO::Prompter>
+
+=back
 
 =head1 INCOMPATIBILITIES
 
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
 None reported.
 
-
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 
@@ -225,6 +206,37 @@ Please report any bugs or feature requests to
 C<bug-io-editprompt@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
 
+=head1 SEE ALSO
+
+Other modules with related functionality include:
+
+=over
+
+=item *
+
+C<IO::Prompt>
+
+=item *
+
+C<IO::Prompter>
+
+=item *
+
+C<IO::Prompt::Tiny>
+
+=item *
+
+C<IO::Prompt::Simple>
+
+=item *
+
+C<Prompt::Timeout>
+
+=item *
+
+C<Term::Prompt>
+
+=back
 
 =head1 AUTHOR
 
@@ -233,7 +245,7 @@ G. Wade Johnson  C<< <gwadej@cpan.org> >>
 
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2013, G. Wade Johnson C<< <gwadej@cpan.org> >>. All rights reserved.
+Copyright (c) 2015, G. Wade Johnson C<< <gwadej@cpan.org> >>. All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
