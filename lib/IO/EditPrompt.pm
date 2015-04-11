@@ -6,7 +6,7 @@ use strict;
 use File::Temp ();
 use IO::Prompter ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
     my ($class, $opts) = (@_);

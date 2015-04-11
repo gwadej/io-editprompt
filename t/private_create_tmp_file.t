@@ -22,6 +22,6 @@ use IO::EditPrompt;
     my ($tmp, $filename) = $p->_create_tmp_file( "# One line\n" );
 
     ok( -f $filename, "Temp file exists" );
-    like( $filename, qr/^$dir/, '... in supplied path.' );
+    like( $filename, qr/^\Q$dir/, '... in supplied path.' );
     is( do { local $/; open my $fh, '<', $filename; <$fh> }, "# One line\n", '... contains prompt' );
 }
